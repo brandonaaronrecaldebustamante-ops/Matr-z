@@ -21,17 +21,47 @@ body,html{
     background-color: rgb(80, 12, 12);
     box-shadow: 0 0 10px rgba(255,85,85,0.6);
 }
-@media (max-width: 768px) {
-  .container {
-    width: 95%;
-  }
-  header, main, footer {
-    padding: 1rem;
-  }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
 }
-@media (max-width: 480px) {
-  header, main, footer {
-    font-size: 0.9rem;
+
+body {
+  width: 100%;
+  line-height: 1.6;
+}
+#index-container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#index-container img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.col {
+  flex: 1;
+  min-width: 200px;
+}
+@media (max-width: 768px) {
+  #index-container {
+    width: 95%;
+    padding: 0.5rem;
+  }
+  .row {
+    flex-direction: column;
   }
 }
 
