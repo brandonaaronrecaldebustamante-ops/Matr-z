@@ -21,4 +21,17 @@ body,html{
     background-color: rgb(80, 12, 12);
     box-shadow: 0 0 10px rgba(255,85,85,0.6);
 }
+@media (max-width: 768px) {
+  .container {
+    width: 95%;
+  }
+  header, main, footer {
+    padding: 1rem;
+  }
+}
+@media (max-width: 480px) {
+  header, main, footer {
+    font-size: 0.9rem;
+  }
+}
 
