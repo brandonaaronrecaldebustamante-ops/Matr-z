@@ -1,0 +1,24 @@
+body,html{
+    color: #ffffff; 
+    font-family: Arial, Helvetica, sans-serif;
+    height: 100%;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    background: url(fondo.jpg) center center;
+    background-size: cover;
+}
+.boton-redireccion{
+ background-color: rgb(255, 0, 0);
+ color: rgb(255, 255, 255);
+ padding: 10px 20px;
+ display: inline-block;
+ margin-top: 20px;
+ border-radius: 5px;
+ text-decoration: none;
+}
+.boton-redireccion:hover{
+    background-color: rgb(80, 12, 12);
+    box-shadow: 0 0 10px rgba(255,85,85,0.6);
+}
+

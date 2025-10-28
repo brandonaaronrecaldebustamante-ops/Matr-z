@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Matriz Antisimétrica 2x2</title>
+  <script type="module" src="https://pyscript.net/releases/2024.11.1/core.js"></script>
+  <link rel="stylesheet" href="https://pyscript.net/releases/2024.11.1/core.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #0b0b0b;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    h2 { color: #ff4242; }
+    .fila-principal {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .input-nombre {
+      width: 80px;
+      height: 120px;
+      background: #000;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      outline: none;
+      box-shadow: 0 2px 6px rgba(255,255,255,0.2);
+      transition: 0.2s;
+    }
+    .input-nombre:focus {
+      background: #111;
+      box-shadow: 0 0 8px rgba(255, 0, 0, 0.5);
+    }
+    .igual {
+      font-size: 32px;
+      font-weight: bold;
+      color: #fff;
+      margin: 0 4px;
+      user-select: none;
+    }
+    .matriz-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .corchete {
+      font-size: 80px;
+      color: #ff0000;
+      font-weight: bold;
+      line-height: 0.8;
+      user-select: none;
+    }
+    .cuadro-matriz {
+      display: grid;
+      grid-template-columns: 70px 70px;
+      grid-gap: 14px;
+      padding: 10px 6px;
+    }
+    input[type="number"] {
+      width: 70px;
+      height: 46px;
+      text-align: center;
+      font-size: 18px;
+      border: 2px solid #555;
+      border-radius: 6px;
+      background: #1c1c1c;
+      color: #fff;
+    }
+    select, button {
+      margin-top: 18px;
+      padding: 8px 14px;
+      font-size: 15px;
+      border-radius: 6px;
+      border: 1px solid #ff0000;
+      background: #1a1a1a;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    select:hover, button:hover {
+      background: #2a2a2a;
+    }
+    #salida {
+      background: #111;
+      margin: 20px auto;
+      padding: 14px;
+      width: 360px;
+      border-radius: 10px;
+      text-align: left;
+      box-shadow: 0 0 10px rgba(255,255,255,0.1);
+      min-height: 40px;
+    }
+    label {
+      color: white;
+      font-weight: bold;
+      margin-right: 8px;
+    }
+ .btn-regresar {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 18px;
+      background-color: #0b0b0b;
+      color: #ff5555;
+      font-weight: bold;
+      border: 2px solid #ff5555;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+      text-decoration: none;
+    }
+    .btn-regresar:hover {
+      background-color: #b10d0d;
+      color: #0b0b0b;
+      box-shadow: 0 0 10px rgba(255,85,85,0.6);
+    }
+    @media (max-width: 520px) {
+      .fila-principal { flex-direction: column; gap: 8px; }
+      .input-nombre { width: 60px; height: 96px; font-size: 18px; }
+      .corchete { font-size: 56px; }
+      .cuadro-matriz { grid-template-columns: 56px 56px; grid-gap: 10px; }
+      input[type="number"] { width: 56px; height: 40px; font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <h2>Matriz Antisimétrica 2x2</h2>
+  <div class="fila-principal">
+    <input id="nombreMatriz" class="input-nombre" placeholder="A" maxlength="4">
+    <span class="igual">=</span>
+    <div class="matriz-container">
+      <div class="corchete">[</div>
+      <div class="cuadro-matriz">
+        <input id="a11" type="number" placeholder="a11">
+        <input id="a12" type="number" placeholder="a12">
+        <input id="a21" type="number" placeholder="a21">
+        <input id="a22" type="number" placeholder="a22">
+      </div>
+      <div class="corchete">]</div>
+    </div>
+  </div>
+
+  <div style="margin-top:12px;">
+    <label for="modo">Mostrar:</label>
+    <select id="modo">
+      <option value="resultado">Solo resultado</option>
+      <option value="procedimiento">Con procedimiento</option>
+    </select>
+    <button id="btn">Verificar Antisimetría</button>
+  </div>
+
+  <div id="salida"></div>
+
+  <a href="index.html" class="btn-regresar">Regresar al inicio</a>
+
+  <py-script>
+    from js import document
+    from pyodide.ffi import create_proxy
+
+    def calcular(event):
+        salida = document.getElementById("salida")
+        try:
+            nombre = document.getElementById("nombreMatriz").value or "A"
+            a11 = float(document.getElementById("a11").value)
+            a12 = float(document.getElementById("a12").value)
+            a21 = float(document.getElementById("a21").value)
+            a22 = float(document.getElementById("a22").value)
+            modo = document.getElementById("modo").value
+
+            # Condición para matriz antisimétrica:
+            # 1) a11 y a22 deben ser 0
+            # 2) a21 = -a12
+            es_antisimetrica = (a11 == 0 and a22 == 0 and a21 == -a12)
+
+            if modo == "resultado":
+                if es_antisimetrica:
+                    salida.innerHTML = f"<b>{nombre}</b> es una matriz antisimétrica "
+                else:
+                    salida.innerHTML = f"<b>{nombre}</b> no es antisimétrica "
+            else:
+                proc = (f"<b>Procedimiento para {nombre}:</b><br>"
+                        f"La matriz es:<br>"
+                        f"[ {a11}  {a12} ]<br>"
+                        f"[ {a21}  {a22} ]<br><br>"
+                        f"Una matriz es antisimétrica si Aᵗ = -A<br>"
+                        f"Condiciones:<br>"
+                        f"1️⃣ a₁₁ = 0 → {a11 == 0}<br>"
+                        f"2️⃣ a₂₂ = 0 → {a22 == 0}<br>"
+                        f"3️⃣ a₂₁ = -a₁₂ → {a21} {'=' if a21 == -a12 else '≠'} {-a12}<br><br>"
+                        f"<b>Resultado:</b> {'Antisimétrica ' if es_antisimetrica else 'No antisimétrica'}")
+                salida.innerHTML = proc
+
+        except:
+            salida.innerHTML = "<b>Error:</b> Rellena todos los campos con números."
+
+    calcular_proxy = create_proxy(calcular)
+    document.getElementById("btn").addEventListener("click", calcular_proxy)
+  </py-script>
+  <p><H2>EXPLICACION DE COMO FUNCIONA:</H2></p>
+</body>
+</html>

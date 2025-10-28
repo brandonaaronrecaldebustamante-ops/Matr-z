@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matriz Rectangular 2x3</title>
+  <script type="module" src="https://pyscript.net/releases/2024.11.1/core.js"></script>
+  <link rel="stylesheet" href="https://pyscript.net/releases/2024.11.1/core.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #0b0b0b;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    h2 { color: #ff5555; }
+
+    .fila-principal {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .input-nombre {
+      width: 80px;
+      height: 120px;
+      background: #000;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      outline: none;
+      box-shadow: 0 2px 6px rgba(255,255,255,0.2);
+      transition: 0.2s;
+    }
+
+    .input-nombre:focus {
+      background: #111;
+      box-shadow: 0 0 8px rgba(255,0,0,0.5);
+    }
+
+    .igual {
+      font-size: 32px;
+      font-weight: bold;
+      color: #fff;
+      margin: 0 4px;
+      user-select: none;
+    }
+
+    .matriz-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .corchete {
+      font-size: 80px;
+      color: #ff0000;
+      font-weight: bold;
+      line-height: 0.8;
+      user-select: none;
+    }
+
+    .cuadro-matriz {
+      display: grid;
+      grid-template-columns: 70px 70px;
+      grid-gap: 14px;
+      padding: 10px 6px;
+    }
+
+    input[type="number"] {
+      width: 70px;
+      height: 46px;
+      text-align: center;
+      font-size: 18px;
+      border: 2px solid #ff0000;
+      border-radius: 6px;
+      background: #1c1c1c;
+      color: #fff;
+    }
+
+    select, button {
+      margin-top: 18px;
+      padding: 8px 14px;
+      font-size: 15px;
+      border-radius: 6px;
+      border: 1px solid #ff0000;
+      background: #1a1a1a;
+      color: #ffffff;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #8d0606;
+      color: #000;
+    }
+
+    #salida {
+      background: #111;
+      margin: 20px auto;
+      padding: 14px;
+      width: 360px;
+      border-radius: 10px;
+      text-align: left;
+      box-shadow: 0 0 10px rgba(255,255,255,0.1);
+      min-height: 40px;
+    }
+    label {
+      color: white;
+      font-weight: bold;
+      margin-right: 8px;
+    }
+    .btn-regresar {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 18px;
+      background-color: #0b0b0b;
+      color: #ff5555;
+      font-weight: bold;
+      border: 2px solid #ff5555;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+      text-decoration: none;
+    }
+
+    .btn-regresar:hover {
+      background-color: #b10d0d;
+      color: #0b0b0b;
+      box-shadow: 0 0 10px rgba(255,85,85,0.6);
+    }
+    @media (max-width: 520px) {
+      .fila-principal { flex-direction: column; gap: 8px; }
+      .input-nombre { width: 60px; height: 96px; font-size: 18px; }
+      .corchete { font-size: 56px; }
+      .cuadro-matriz { grid-template-columns: 56px 56px; grid-gap: 10px; }
+      input[type="number"] { width: 56px; height: 40px; font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <h2>Resolver Matriz Rectangular 2x3</h2>
+  <div class="fila-principal">
+    <input id="nombreMatriz" class="input-nombre" placeholder="A" maxlength="4">
+    <span class="igual">=</span>
+    <div class="matriz-container">
+      <div class="corchete">[</div>
+      <div class="cuadro-matriz">
+        <input id="a11" type="number" placeholder="a11">
+        <input id="a12" type="number" placeholder="a12">
+        <input id="a13" type="number" placeholder="a13">
+        <input id="a21" type="number" placeholder="a21">
+        <input id="a22" type="number" placeholder="a22">
+        <input id="a23" type="number" placeholder="a23">
+      </div>
+      <div class="corchete">]</div>
+    </div>
+  </div>
+  <div style="margin-top:12px;">
+    <label for="modo">Mostrar:</label>
+    <select id="modo">
+      <option value="resultado">Solo resultado</option>
+      <option value="procedimiento">Con procedimiento</option>
+    </select>
+    <button id="btn">Calcular transpuesta</button>
+  </div>
+  <div id="salida"></div>
+<button class="btn-regresar" onclick="window.location.href='index.html'">
+  Volver al inicio
+</button>
+  <py-script>
+from js import document
+from pyodide.ffi import create_proxy
+def calcular(event):
+    salida = document.getElementById("salida")
+    try:
+        nombre = document.getElementById("nombreMatriz").value or "A"
+        modo = document.getElementById("modo").value
+        # Leer datos de la matriz
+        a11 = float(document.getElementById("a11").value)
+        a12 = float(document.getElementById("a12").value)
+        a13 = float(document.getElementById("a13").value)
+        a21 = float(document.getElementById("a21").value)
+        a22 = float(document.getElementById("a22").value)
+        a23 = float(document.getElementById("a23").value)
+        # Matriz original 2x3
+        A = [[a11, a12, a13],
+             [a21, a22, a23]]
+
+        # Calcular transpuesta 3x2
+        At = [[A[0][0], A[1][0]],
+              [A[0][1], A[1][1]],
+              [A[0][2], A[1][2]]]
+        if modo == "resultado":
+            salida.innerHTML = (
+                f"<b>Matriz {nombre}:</b><br>"
+                f"[ {a11}  {a12}  {a13} ]<br>"
+                f"[ {a21}  {a22}  {a23} ]<br><br>"
+                f"<b>Transpuesta ({nombre})ᵀ:</b><br>"
+                f"[ {At[0][0]}  {At[0][1]} ]<br>"
+                f"[ {At[1][0]}  {At[1][1]} ]<br>"
+                f"[ {At[2][0]}  {At[2][1]} ]"
+            )
+        else:
+            salida.innerHTML = (
+                f"<b>Procedimiento para obtener {nombre}ᵀ:</b><br><br>"
+                f"{nombre} = [ {a11}  {a12}  {a13} ]<br>"
+                f"         [ {a21}  {a22}  {a23} ]<br><br>"
+                f"Paso 1: Intercambiamos filas por columnas.<br>"
+                f"Fila 1 → Columna 1, Fila 2 → Columna 2.<br><br>"
+                f"Paso 2: Obtenemos {nombre}ᵀ:<br>"
+                f"[ {At[0][0]}  {At[0][1]} ]<br>"
+                f"[ {At[1][0]}  {At[1][1]} ]<br>"
+                f"[ {At[2][0]}  {At[2][1]} ]<br><br>"
+                f"<b>{nombre}ᵀ = Matriz 3x2</b>"
+            )
+    except Exception as e:
+        salida.innerHTML = "<b>Error:</b> Rellena todos los campos con números válidos."
+# Crear proxy
+calcular_proxy = create_proxy(calcular)
+document.getElementById("btn").addEventListener("click", calcular_proxy)
+  </py-script>
+  <p><H2>EXPLICACION DE COMO FUNCIONA:</H2></p>
+</body>
+</html>
